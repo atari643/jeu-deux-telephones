@@ -1,0 +1,53 @@
+# Surcharge minimale de la config par defaut de detekt (buildUponDefaultConfig = true).
+config:
+  validation: true
+
+complexity:
+  LongMethod:
+    threshold: 60
+    ignoreAnnotated: ['Composable']
+  LongParameterList:
+    functionThreshold: 6
+    ignoreDefaultParameters: true
+    ignoreAnnotated: ['Composable']
+  TooManyFunctions:
+    ignorePrivate: true
+    excludes: ['**/test/**']
+  CyclomaticComplexMethod:
+    ignoreAnnotated: ['Composable']
+
+naming:
+  FunctionNaming:
+    ignoreAnnotated: ['Composable', 'Test']
+  TopLevelPropertyNaming:
+    constantPattern: '[A-Z][A-Za-z0-9_]*'
+  MatchingDeclarationName:
+    active: false
+
+style:
+  MagicNumber:
+    ignorePropertyDeclaration: true
+    ignoreCompanionObjectPropertyDeclaration: true
+    ignoreAnnotated: ['Preview', 'Composable']
+    excludes: ['**/test/**']
+  UnusedPrivateMember:
+    ignoreAnnotated: ['Preview']
+  MaxLineLength:
+    maxLineLength: 140
+  ForbiddenComment:
+    active: false
+  WildcardImport:
+    active: true
+
+potential-bugs:
+  UnsafeCallOnNullableType:
+    active: true
+  LateinitUsage:
+    active: true
+    excludes: ['**/test/**']
+
+coroutines:
+  GlobalCoroutineUsage:
+    active: true
+  InjectDispatcher:
+    active: false

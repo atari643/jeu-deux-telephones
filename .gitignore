@@ -1,0 +1,14 @@
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/
+# Android / Gradle
+.gradle/
+build/
+local.properties
+.idea/
+*.iml
+.kotlin/
+captures/
+
+# Crashs JVM
+hs_err_pid*.log
+replay_pid*.log

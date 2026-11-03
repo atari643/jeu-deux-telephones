@@ -1,0 +1,78 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "dev",
+  "shell": "pwsh",
+  "tool_output": {
+    "max_lines": 120,
+    "max_bytes": 8000
+  },
+  "mcp": {
+    "mobile": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@mobilenext/mobile-mcp@1.0.12"
+      ],
+      "environment": {
+        "MOBILEMCP_DISABLE_TELEMETRY": "1"
+      },
+      "enabled": false,
+      "timeout": 20000
+    }
+  },
+  "permission": {
+    "edit": {
+      "*": "allow",
+      "*libs.versions.toml": "ask",
+      "*build.gradle.kts": "ask",
+      "*settings.gradle.kts": "ask",
+      "*gradle.properties": "ask",
+      "*gradle-wrapper.properties": "deny",
+      "*.opencode/*": "ask",
+      "*AGENTS.md": "ask",
+      "*opencode.json": "ask",
+      "*tools/*": "ask",
+      "*config/detekt/*": "ask",
+      "*src/test/snapshots/*": "deny",
+      "*ScreenCatalogTest.kt": "deny",
+      "*.github/workflows/*": "ask",
+      "*debug.keystore": "deny",
+      "*docs/decisions/*": "ask"
+    },
+    "doom_loop": "deny",
+    "bash": {
+      "*": "ask",
+      "pwsh tools/*": "allow",
+      "pwsh ./tools/*": "allow",
+      "tools/*": "allow",
+      "./tools/*": "allow",
+      "pwsh -NoProfile -File tools/*": "allow",
+      "ls*": "allow",
+      "dir*": "allow",
+      "Get-ChildItem*": "allow",
+      "cat *": "allow",
+      "Get-Content *": "allow",
+      "rg *": "allow",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git push*": "deny",
+      "*gradlew*": "deny",
+      "git add*": "allow",
+      "git commit*": "allow",
+      "git switch*": "allow",
+      "git checkout -b*": "allow",
+      "git branch*": "allow"
+    },
+    "mobile_*": "deny",
+    "webfetch": "ask",
+    "websearch": "ask",
+    "skill": {
+      "*": "deny",
+      "game-engine": "allow",
+      "android-screen": "allow",
+      "gradle-build-fix": "allow"
+    }
+  }
+}
