@@ -6,3 +6,4 @@ gradlew text eol=lf
 *.jar binary
 *.keystore binary
 .githooks/* text eol=lf
+.github/ownership.txt text eol=lf

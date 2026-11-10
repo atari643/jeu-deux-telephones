@@ -47,8 +47,10 @@ fi
 [ "$KIND" = COMMUN ] && { echo "PERIMETRE OK (branche commune : relecture des deux obligatoire)"; exit 0; }
 
 # 2. Chaque fichier -> son propriétaire (premier motif qui correspond, sinon COMMUN)
+CR=$(printf '\r')
 owner_of() {
   while IFS=' 	' read -r who pat; do
+    pat=${pat%"$CR"}; pat=${pat%% *}          # fins de ligne Windows (CRLF) et espaces en fin de ligne
     case "$who" in ''|'#'*) continue ;; esac
     # shellcheck disable=SC2254
     case "$1" in $pat) echo "$who"; return ;; esac
