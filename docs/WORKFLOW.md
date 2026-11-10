@@ -1,6 +1,6 @@
 # Workflow IA de l'équipe
 
-Deux développeurs, deux IA différentes (A : opencode + Qwen3.8-27B local ; B : au choix), un dépôt GitHub.
+Deux développeurs, deux IA différentes (A : opencode + Qwen3.8-27B local ; B : Gemini dans Android Studio), un dépôt GitHub.
 Principe : **peu d'instructions, beaucoup de vérifications automatiques.** Ce que les IA doivent respecter
 est dans des fichiers partagés ; ce qui décide si le travail est bon, c'est la machine (tests, CI), pas l'IA.
 
@@ -50,7 +50,7 @@ spec (humain + IA)  ->  tasks.md  ->  pour chaque tâche, SESSION NEUVE :
 | superpowers (obra) | idées gardées, pas installé | ~22k tokens au démarrage : impossible dans la fenêtre du modèle local ; on garde spec -> plan -> TDD -> revue. |
 | spec-kit, BMAD, Kiro | écartés | Très lourds ; un benchmark (fournisseur) montre que la spec n'aide pas sur les corrections de bugs. |
 | tdd-guard | écarté | Ne supporte pas Kotlin/Gradle ; le CI joue ce rôle. |
-| Beaucoup d'agents et de skills | réduit à 2 agents + 3 skills (côté opencode) | Pas de preuve de gain ; chaque sous-agent recharge tout le contexte sur un GPU unique. |
+| Beaucoup d'agents et de skills | réduit à 2 agents (opencode) + 4 skills partagés | Pas de preuve de gain ; chaque sous-agent recharge tout le contexte sur un GPU unique. |
 | AGENTS.md généré par IA (`/init`) | interdit | Les fichiers de contexte générés font *baisser* la réussite ; écrits à la main : léger gain. |
 | RAG vectoriel sur le code | écarté | Projet petit : `rg`, les modèles à copier et la doc Android hors ligne (`tools/docs.ps1`) suffisent. |
 

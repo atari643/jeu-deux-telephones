@@ -17,11 +17,13 @@ ne modifient plus les mêmes fichiers.
 - CA6 : écran `Game` : Canvas qui dessine le joueur (rectangle) à partir d'un `GameUiState` figé ;
   snapshot Roborazzi `GameScreen_default`.
 - CA7 : `AppModule`, `AppNavHost` (Lobby = départ, puis Game), `strings.xml`, `ScreenCatalog` contiennent
-  déjà les entrées de tous ces écrans ; `pwsh tools/check.ps1` = CHECK OK.
+  déjà les entrées de tous ces écrans ; `AppModule` est rangé en deux blocs commentés `// --- A ---`
+  (Engine, GameViewModel) et `// --- B ---` (GameLinkFactory, GameSession, SensorSource, InputSource, LobbyViewModel) ;
+  `pwsh tools/check.ps1` = CHECK OK.
 
 ## Contenu du contrat (`game/contract/`, aucun import Android)
 - `PlayerState(x, y, vx, vy, onGround)` (unités = tuiles, y vers le bas), `GameState(tick, player, worldAngleDeg,
-  levelId, status)`, `GameStatus { WAITING, RUNNING, WON, LOST }`, `Inputs(moveX, jump, worldAngleDeg, darkWorld)`.
+  levelId, status)`, `GameStatus { WAITING, RUNNING, WON, LOST }`, `Inputs(moveX, jump, worldAngleDeg, darkWorld, special)`.
 - `Role { CHARACTER, ENVIRONMENT }`. `NetMessage` scellé : `Hello(role)`, `Ready`, `CharInput(seq, moveX, jump)`,
   `EnvInput(seq, angleDeg, special)`, `Snapshot(state)`, `Ping(id)`, `Pong(id)`. `NetCodec` : une ligne JSON.
 - `LinkState { CONNECTING, CONNECTED, DISCONNECTED }`.

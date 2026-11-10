@@ -7,7 +7,7 @@ description: Moteur de jeu pur Kotlin du développeur A - step à pas fixe, phys
 
 ## Le contrat à respecter (game/contract/, FIGÉ)
 `Engine.step(state: GameState, inputs: Inputs): GameState` · `GameState(tick, player, worldAngleDeg, levelId, status)`
-· `PlayerState(x, y, vx, vy, onGround)` · `Inputs(moveX, jump, worldAngleDeg, darkWorld)`.
+· `PlayerState(x, y, vx, vy, onGround)` · `Inputs(moveX, jump, worldAngleDeg, darkWorld, special)`.
 Les `Inputs` viennent de B (`game/input/InputMapper`) : le moteur ne connaît NI capteur NI réseau.
 Besoin d'un champ en plus -> `docs/team/demandes.md`, pas de modification du contrat.
 

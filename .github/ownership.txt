@@ -4,6 +4,7 @@
 # B      = seulement les branches b/*       (développeur B : capteurs, liaison, entrées, lobby)
 # AB     = les deux peuvent y AJOUTER leurs lignes (fichiers de câblage partagés)
 # Tout fichier non listé = COMMUN : modifiable uniquement sur une branche commun/* (PR approuvée par les deux).
+# Une branche commun/* peut modifier TOUS les fichiers (A, B, AB, COMMUN) : c'est pour ça qu'elle exige les deux.
 
 # --- A : moteur, niveaux, rendu ---
 A   app/src/main/kotlin/com/example/app/game/engine/*

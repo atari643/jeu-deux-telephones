@@ -8,9 +8,11 @@ Deux développeurs, chacun avec une IA différente : ce fichier et le CI sont le
 1. Ton rôle : `git config team.role` (A ou B), sinon le préfixe de ta branche (`a/`, `b/`). Inconnu -> demande à l'humain.
 2. Lis ta fiche : `docs/team/A.md` (moteur, niveaux, rendu) ou `docs/team/B.md` (capteurs, liaison, entrées, lobby).
 3. Ne modifie QUE tes fichiers (`.github/ownership.txt`). Le hook git et le CI refusent le reste.
-4. Branches : `a/<NN-feature>` ou `b/<NN-feature>` depuis `main` à jour ; `commun/<sujet>` pour le commun.
+4. Branches : `a/<NN-feature>` ou `b/<NN-feature>` depuis `main` à jour. `commun/<sujet>` = travail commun
+   (contrat, règles, outils) : tous les fichiers y sont autorisés, A comme B peuvent y committer, PR approuvée par les deux.
    Jamais de commit ni de push sur `main`, jamais `--no-verify`, jamais `push --force`, jamais la branche de l'autre.
 5. Besoin d'un changement chez l'autre ou dans `game/contract/` : écris-le dans `docs/team/demandes.md`, puis STOP.
+   C'est l'HUMAIN qui décide d'ouvrir une branche `commun/<sujet>`, jamais l'IA seule.
 6. Avant de commencer : `git switch main && git pull`, puis crée ou reprends ta branche et `git merge main`.
 
 ## Stack FIGÉE
@@ -50,7 +52,7 @@ di/AppModule.kt  une ligne par classe injectée
 
 ## Règles
 1. Lis un fichier avant de l'éditer. N'invente pas d'API : cherche dans le code, puis `tools/docs.ps1`.
-2. Moteur et contrat : pur Kotlin, déterministe (pas d'horloge, pas de random sans graine). Constantes dans `GameConfig`.
+2. Moteur et contrat : pur Kotlin, déterministe (pas d'horloge, pas de random sans graine). Constantes dans un objet `XxxConfig` du dossier concerné (`GameConfig` pour A, `LinkConfig`/`InputConfig` pour B).
 3. Capteurs et réseau : toujours derrière une interface, testés avec des fakes.
 4. Composables : sans logique ; tout élément interactif a un `Modifier.testTag` défini dans `<E>Tags`.
 5. Textes affichés dans `res/values/strings.xml` + `stringResource`. Jamais en dur.
@@ -62,4 +64,4 @@ di/AppModule.kt  une ligne par classe injectée
 
 ## Definition of Done
 `pwsh tools/check.ps1` = CHECK OK (spotless, detekt, tests, Roborazzi, APK), critères de la spec
-couverts par des tests, écran ajouté dans `ScreenCatalog.kt`, CI GitHub vert sur la PR.
+couverts par des tests, écran ajouté dans `ScreenCatalog.kt` (si la tâche crée un écran), CI GitHub vert sur la PR.

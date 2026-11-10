@@ -12,7 +12,8 @@ capteurs, la liaison réseau, l'InputMapper et le lobby. Vous ne touchez jamais 
 | `app/src/main/assets/levels/` | niveaux en texte |
 | `docs/features/01-*`, `04-*`, `05-*` | tes specs et tâches |
 Partagés (tu AJOUTES tes lignes, tu ne réécris pas celles de B) : `di/AppModule.kt`, `ui/navigation/`,
-`res/values/strings.xml` (préfixe `game_` / `level_`), `ScreenCatalog.kt`, `src/test/.../testing/`.
+`res/values/strings.xml` (préfixe `game_` / `level_`), `app/src/test/.../ui/catalog/ScreenCatalog.kt`,
+`app/src/test/.../testing/`. Dans `AppModule.kt`, le bloc `// --- A ---` est à toi (`Engine`, `GameViewModel`).
 **Pas à toi** : `data/sensors/`, `data/link/`, `game/input/`, `ui/lobby/` (B) ; `game/contract/`, `AGENTS.md`,
 `tools/`, `.github/`, fichiers Gradle (commun, sauf pendant `commun/00-contrat`).
 

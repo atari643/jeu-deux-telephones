@@ -10,6 +10,7 @@ et fournir `InputSource` au jeu de A. Repli propre si un capteur manque.
 ## Répartition
 Téléphone CHARACTER : accéléromètre (marcher), proximité (sauter), lumière (monde sombre).
 Téléphone ENVIRONMENT : game rotation vector (angle du monde), gyroscope (rotation rapide = `special`).
+Valeurs à fixer pendant la prise en main (0.3) : zone morte, seuil de lumière, seuil « proche ».
 
 ## Critères d'acceptation
 - CA1 : `AndroidSensorSource` enregistre les capteurs présents en `SENSOR_DELAY_GAME` et émet des `SensorReading` (Robolectric).

@@ -6,4 +6,4 @@ Ajouter en bas, ne jamais effacer une demande ouverte de l'autre. Fermer = passe
 
 | # | De | Pour | Demande (fichier, besoin, pourquoi) | Statut |
 |---|---|---|---|---|
-| 1 | - | - | (exemple) `game/contract/Inputs.kt` : ajouter `special: Boolean` pour le gyroscope (spec 03, CA4) | OUVERT |
+| 0 | B | A | EXEMPLE (à ne pas traiter) : `ui/game/GameScreen.kt` : afficher l'état de la liaison en haut à droite (spec 06, CA2) | EXEMPLE |
