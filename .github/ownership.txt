@@ -1,0 +1,42 @@
+# Qui possède quel fichier. Lu par tools/scope-check.sh (hooks git locaux + CI).
+# Format : PROPRIETAIRE  motif   (glob shell : * traverse aussi les dossiers). Le PREMIER motif qui correspond gagne.
+# A      = seulement les branches a/*       (développeur A : moteur, niveaux, rendu)
+# B      = seulement les branches b/*       (développeur B : capteurs, liaison, entrées, lobby)
+# AB     = les deux peuvent y AJOUTER leurs lignes (fichiers de câblage partagés)
+# Tout fichier non listé = COMMUN : modifiable uniquement sur une branche commun/* (PR approuvée par les deux).
+
+# --- A : moteur, niveaux, rendu ---
+A   app/src/main/kotlin/com/example/app/game/engine/*
+A   app/src/test/kotlin/com/example/app/game/engine/*
+A   app/src/main/kotlin/com/example/app/ui/game/*
+A   app/src/test/kotlin/com/example/app/ui/game/*
+A   app/src/main/assets/levels/*
+A   app/src/test/snapshots/Game*
+A   docs/features/01-*
+A   docs/features/04-*
+A   docs/features/05-*
+
+# --- B : capteurs, liaison réseau, entrées, lobby ---
+B   app/src/main/kotlin/com/example/app/data/sensors/*
+B   app/src/test/kotlin/com/example/app/data/sensors/*
+B   app/src/main/kotlin/com/example/app/data/link/*
+B   app/src/test/kotlin/com/example/app/data/link/*
+B   app/src/main/kotlin/com/example/app/game/input/*
+B   app/src/test/kotlin/com/example/app/game/input/*
+B   app/src/main/kotlin/com/example/app/ui/lobby/*
+B   app/src/test/kotlin/com/example/app/ui/lobby/*
+B   app/src/test/snapshots/Lobby*
+B   docs/features/02-*
+B   docs/features/03-*
+B   docs/features/06-*
+
+# --- AB : câblage partagé (ajouter ses lignes, ne pas réécrire celles de l'autre) ---
+AB  app/src/main/kotlin/com/example/app/di/AppModule.kt
+AB  app/src/main/kotlin/com/example/app/ui/navigation/*
+AB  app/src/main/res/values/strings.xml
+AB  app/src/main/res/drawable/*
+AB  app/src/main/res/raw/*
+AB  app/src/test/kotlin/com/example/app/ui/catalog/ScreenCatalog.kt
+AB  app/src/test/kotlin/com/example/app/testing/*
+AB  docs/features/07-*
+AB  docs/team/demandes.md

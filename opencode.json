@@ -38,7 +38,10 @@
       "*ScreenCatalogTest.kt": "deny",
       "*.github/workflows/*": "ask",
       "*debug.keystore": "deny",
-      "*docs/decisions/*": "ask"
+      "*docs/decisions/*": "ask",
+      "*.agents/*": "ask",
+      "*.githooks/*": "deny",
+      "*.github/ownership.txt": "deny"
     },
     "doom_loop": "deny",
     "bash": {
@@ -63,7 +66,14 @@
       "git commit*": "allow",
       "git switch*": "allow",
       "git checkout -b*": "allow",
-      "git branch*": "allow"
+      "git branch*": "allow",
+      "*--no-verify*": "deny",
+      "*--force*": "deny",
+      "git config*": "deny",
+      "git merge*": "allow",
+      "git pull*": "allow",
+      "git restore*": "allow",
+      "sh tools/scope-check.sh*": "allow"
     },
     "mobile_*": "deny",
     "webfetch": "ask",

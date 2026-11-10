@@ -1,6 +1,6 @@
 # 00-contrat - Contrat commun et squelette du jeu
 
-Propriétaire : A (B relit la PR)  ·  Branche : `feat/00-contrat`  ·  Décisions : 0001 à 0004
+Propriétaire : A (B relit la PR)  ·  Branche : `commun/00-contrat`  ·  Décisions : 0001 à 0004
 
 ## Objectif
 Poser tout ce que les deux développeurs partagent AVANT de travailler en parallèle : types du jeu,
@@ -19,15 +19,25 @@ ne modifient plus les mêmes fichiers.
 - CA7 : `AppModule`, `AppNavHost` (Lobby = départ, puis Game), `strings.xml`, `ScreenCatalog` contiennent
   déjà les entrées de tous ces écrans ; `pwsh tools/check.ps1` = CHECK OK.
 
-## Contenu du contrat (`game/contract/`)
-- `PlayerState(x, y, vx, vy, onGround)`, `GameState(tick, player, worldAngleDeg, levelId, status)`,
-  `GameStatus { WAITING, RUNNING, WON, LOST }`, `Inputs(moveX, jump, worldAngleDeg, darkWorld)`.
-- `NetMessage` scellé : `Hello(role)`, `Ready`, `CharInput(seq, moveX, jump)`,
-  `EnvInput(seq, angleDeg, special)`, `Snapshot(state)`, `Ping(id)`, `Pong(id)`. `Role { CHARACTER, ENVIRONMENT }`.
-- `interface GameLink { val incoming: Flow<NetMessage>; suspend fun send(m: NetMessage); suspend fun close() }`
-- `interface SensorSource { fun readings(): Flow<SensorReading> }`, `SensorReading(type, values: List<Float>, timestampNs)`,
-  `SensorType { GAME_ROTATION, ACCELEROMETER, GYROSCOPE, PROXIMITY, LIGHT }`.
+## Contenu du contrat (`game/contract/`, aucun import Android)
+- `PlayerState(x, y, vx, vy, onGround)` (unités = tuiles, y vers le bas), `GameState(tick, player, worldAngleDeg,
+  levelId, status)`, `GameStatus { WAITING, RUNNING, WON, LOST }`, `Inputs(moveX, jump, worldAngleDeg, darkWorld)`.
+- `Role { CHARACTER, ENVIRONMENT }`. `NetMessage` scellé : `Hello(role)`, `Ready`, `CharInput(seq, moveX, jump)`,
+  `EnvInput(seq, angleDeg, special)`, `Snapshot(state)`, `Ping(id)`, `Pong(id)`. `NetCodec` : une ligne JSON.
+- `LinkState { CONNECTING, CONNECTED, DISCONNECTED }`.
+  `interface GameLink { val state: StateFlow<LinkState>; val incoming: Flow<NetMessage>; suspend fun send(m: NetMessage); suspend fun close() }`
+  `interface GameLinkFactory { suspend fun host(port: Int): GameLink; suspend fun join(ip: String, port: Int): GameLink }`
+- `interface GameSession { val role: StateFlow<Role?>; val link: StateFlow<GameLink?>; fun start(role: Role, link: GameLink); suspend fun end() }`
+  (le lobby de B la remplit, l'écran de jeu de A la lit).
+- `SensorType { GAME_ROTATION, ACCELEROMETER, GYROSCOPE, PROXIMITY, LIGHT }`, `SensorReading(type, values: List<Float>, timestampNs)`,
+  `interface SensorSource { fun availableTypes(): Set<SensorType>; fun readings(): Flow<SensorReading> }`.
+- `interface InputSource { fun inputs(role: Role): Flow<Inputs> }` (B l'implémente avec capteurs + InputMapper ; A la consomme).
 - `interface Engine { fun step(state: GameState, inputs: Inputs): GameState }`.
+
+## Implémentations de départ (remplacées ensuite par chaque propriétaire)
+- `data/link/InMemoryLinkPair.kt` (deux `GameLink` reliés par des `Channel`), `data/link/InMemoryGameSession.kt`.
+- `game/engine/GameEngine.kt` stub + `GameConfig.kt`.
+- Tests (`testing/`) : `FakeSensorSource`, `FakeInputSource`, `FakeGameLinkFactory`.
 
 ## Hors périmètre
 Physique réelle, sockets TCP, capteurs Android, niveaux : features suivantes.

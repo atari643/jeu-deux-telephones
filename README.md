@@ -15,14 +15,15 @@ Développé uniquement avec des IA. Règles pour les IA : `AGENTS.md`. Workflow 
 | Tailscale (PC + téléphone) | A | Déboguer le téléphone depuis le Shadow PC (§4) |
 | scrcpy (facultatif) | A et B | Afficher le téléphone sur le PC |
 
-Vérifier l'installation : `pwsh tools/doctor.ps1` puis `pwsh tools/check.ps1` (doit afficher `CHECK OK`).
+Après le clone, une fois : `pwsh tools/setup-team.ps1 -Role A` (ou `-Role B`) — rôle, protections git, vérification
+complète (doit finir par `CHECK OK`). Diagnostic : `pwsh tools/doctor.ps1`.
 
 ## 2. Travailler (les deux)
 ```powershell
-git switch -c feat/01-moteur                 # une branche par feature
+git switch -c a/01-moteur                    # a/ pour A, b/ pour B (préfixe obligatoire)
 # demander à son IA : "fais la tâche 3 de docs/features/01-moteur/tasks.md"
 pwsh tools/check.ps1                          # CHECK OK avant chaque commit
-git push -u origin feat/01-moteur; gh pr create   # l'autre relit, le CI doit être vert
+git push; gh pr create                       # l'autre relit, le CI doit être vert
 ```
 
 ## 3. A : opencode + Qwen local (dans Android Studio)
@@ -54,4 +55,7 @@ git push -u origin feat/01-moteur; gh pr create   # l'autre relit, le CI doit ê
 
 ## Structure
 `AGENTS.md` (règles IA) · `docs/WORKFLOW.md` · `docs/decisions/` (ADR) · `docs/features/` (specs + tâches)
-· `tools/` (scripts filtrés pour les IA) · `.github/` (CI + modèle de PR) · `.opencode/` (config de A).
+· `docs/team/` (fiches A et B, demandes) · `tools/` (scripts filtrés pour les IA) · `.github/` (CI, PR, `ownership.txt`)
+· `.githooks/` (protections locales) · `.agents/skills/` (skills des deux IA) · `.opencode/` (config de A).
+
+**Nouveau développeur B ?** Commence par `docs/team/B-DEMARRAGE.md`.

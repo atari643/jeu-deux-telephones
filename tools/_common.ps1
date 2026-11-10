@@ -4,9 +4,15 @@ $OutputEncoding = [Text.UTF8Encoding]::new($false)
 $ErrorActionPreference = 'Continue'
 
 $Root = Split-Path $PSScriptRoot -Parent
-if (-not $env:ANDROID_HOME) { $env:ANDROID_HOME = "$env:LOCALAPPDATA\Android\Sdk" }
-$Adb = Join-Path $env:ANDROID_HOME 'platform-tools\adb.exe'
-$AndroidCli = Join-Path $env:ANDROID_HOME 'cmdline-tools\latest\bin\android.exe'
+# Windows, macOS et Linux (les deux développeurs n'ont pas forcément le même OS)
+if (-not $env:ANDROID_HOME) {
+    $env:ANDROID_HOME = if ($IsWindows) { "$env:LOCALAPPDATA\Android\Sdk" }
+    elseif ($IsMacOS) { "$HOME/Library/Android/sdk" } else { "$HOME/Android/Sdk" }
+}
+$Exe = if ($IsWindows) { '.exe' } else { '' }
+$Gradlew = Join-Path $Root $(if ($IsWindows) { 'gradlew.bat' } else { 'gradlew' })
+$Adb = Join-Path $env:ANDROID_HOME "platform-tools/adb$Exe"
+$AndroidCli = Join-Path $env:ANDROID_HOME "cmdline-tools/latest/bin/android$Exe"
 $AppId = 'com.example.app'
 
 function Get-RelPath([string]$path) {

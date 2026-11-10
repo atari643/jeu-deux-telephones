@@ -1,6 +1,6 @@
 # <NN-nom> - <titre>
 
-Propriétaire : A | B   ·   Branche : `feat/<NN-nom>`   ·   Décisions liées : `docs/decisions/...`
+Propriétaire : A | B   ·   Branche : `a/<NN-nom>` ou `b/<NN-nom>`   ·   Décisions liées : `docs/decisions/...`
 
 ## Objectif (3 lignes max)
 <ce que le joueur ou le code peut faire après cette feature>

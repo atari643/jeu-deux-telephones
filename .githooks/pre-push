@@ -1,0 +1,16 @@
+#!/bin/sh
+# Refuse de pousser sur main ou sur une branche de l'autre développeur.
+ROLE=$(git config --get team.role || true)
+while read -r local_ref local_sha remote_ref remote_sha; do
+  branch=${remote_ref#refs/heads/}
+  case "$branch" in
+    main|master)
+      echo "INTERDIT : pas de push sur main. Pousse ta branche puis ouvre une Pull Request (gh pr create)." >&2; exit 1 ;;
+    a/*) [ "$ROLE" = B ] && { echo "INTERDIT : '$branch' appartient à A (tu es B)." >&2; exit 1; } ;;
+    b/*) [ "$ROLE" = A ] && { echo "INTERDIT : '$branch' appartient à B (tu es A)." >&2; exit 1; } ;;
+    commun/*) ;;
+    *) case "$remote_ref" in refs/heads/*)
+         echo "NOM DE BRANCHE INVALIDE : '$branch'. Utilise a/..., b/... ou commun/..." >&2; exit 1 ;; esac ;;
+  esac
+done
+exit 0

@@ -24,15 +24,25 @@ spec (humain + IA)  ->  tasks.md  ->  pour chaque tâche, SESSION NEUVE :
 - **Relecture croisée** : deux IA différentes ne font pas les mêmes erreurs.
 
 ## 3. Travailler à deux sans conflits
-1. Feature `00-contrat` d'abord : types, messages réseau, interfaces, fakes, ET les squelettes des
-   fichiers communs (Koin, navigation, strings, catalogue). Ensuite chacun travaille dans ses dossiers.
-2. Répartition : **A** = moteur, niveaux, rendu (`game/engine`, `ui/game`) ;
-   **B** = capteurs, liaison TCP, lobby (`data/sensors`, `data/link`, `ui/lobby`).
-   Chacun code contre les fakes de l'autre (`InMemoryLinkPair`, `FakeSensorSource`).
-3. Une branche `feat/<NN-nom>` par feature, une PR par feature. Le contrat ne change que par une PR
-   approuvée par les deux.
-4. Feuille de route proposée : 01-moteur [A], 02-liaison-tcp [B], 03-capteurs [B], 04-rendu [A],
-   05-niveaux [A], 06-lobby-connexion [B], 07-partenaire-simulé [A+B], 08-sons-et-finitions.
+1. **Répartition par couches, pas par téléphone** (sinon les deux toucheraient au moteur, au réseau et au rendu) :
+   - **A** (opencode + Qwen local) = le jeu pur : moteur, niveaux, rendu (`game/engine`, `ui/game`).
+     Kotlin pur et déterministe, idéal pour un modèle local au contexte limité.
+   - **B** (Gemini dans Android Studio) = le matériel : capteurs, liaison TCP, entrées, lobby
+     (`data/sensors`, `data/link`, `game/input`, `ui/lobby`). Demande plus de connaissances Android et des tests sur téléphone.
+   - Fiches de rôle lues par chaque IA : `docs/team/A.md`, `docs/team/B.md`. Propriété des fichiers : `.github/ownership.txt`.
+2. **Le contrat d'abord** (`commun/00-contrat`, fait par A, relu par B) : types, messages, interfaces
+   (`GameLink`, `GameSession`, `SensorSource`, `InputSource`, `Engine`), fakes, et squelettes des fichiers partagés.
+   Ensuite chacun code contre les fakes de l'autre et n'attend jamais.
+3. **Phases** : 0 = contrat (A) + prise en main (B) ; 1 = 01-moteur (A) // 02-liaison-tcp, 03-capteurs (B) ;
+   2 = 04-rendu, 05-niveaux (A) // 06-lobby-connexion (B) ; 3 = 07-intégration ensemble sur deux téléphones.
+4. **Protections automatiques** (une IA qui ignore ses consignes est quand même arrêtée) :
+   | Niveau | Quoi | Bloque |
+   |---|---|---|
+   | Consignes | `AGENTS.md` + fiche de rôle | (l'IA sait ce qu'elle doit faire) |
+   | Hooks git (`tools/setup-team.ps1`) | `.githooks/pre-commit`, `pre-push` -> `tools/scope-check.sh` | commit sur `main`, branche ou fichiers de l'autre |
+   | GitHub | ruleset sur `main` + CI (`check`, `scope`) | push direct, PR sans approbation de l'autre, CI rouge |
+5. **Branches** : `a/<NN-feature>`, `b/<NN-feature>`, `commun/<sujet>` (contrat, outils, règles : approuvé par les deux).
+   Une PR par feature, fusion en « Squash and merge ». Besoin chez l'autre -> `docs/team/demandes.md`.
 
 ## 4. Ce qu'on a volontairement écarté (et pourquoi)
 | Outil / idée | Verdict | Raison |
@@ -44,12 +54,13 @@ spec (humain + IA)  ->  tasks.md  ->  pour chaque tâche, SESSION NEUVE :
 | AGENTS.md généré par IA (`/init`) | interdit | Les fichiers de contexte générés font *baisser* la réussite ; écrits à la main : léger gain. |
 | RAG vectoriel sur le code | écarté | Projet petit : `rg`, les modèles à copier et la doc Android hors ligne (`tools/docs.ps1`) suffisent. |
 
-## 5. Ce qui est propre à chaque IA (non partagé)
-- A (opencode) : `.opencode/` = agents `dev` + `reviewer`, skills `game-engine`, `android-screen`,
-  `gradle-build-fix`, commandes `/task`, `/check`, `/fix`, `/see`, `/review`, `/pr`, `/docs`.
-  Ancien workflow (6 agents, 9 skills) archivé dans `docs/archive/opencode-v1/`.
-- B : n'a besoin que d'`AGENTS.md`, `docs/` et `tools/`. Ex. Gemini dans Android Studio (gratuit, lit
-  `AGENTS.md`), Codex, Cursor, Copilot.
+## 5. Ce qui est partagé et ce qui est propre à chaque IA
+- **Partagé** : `AGENTS.md`, `docs/`, `tools/`, et les skills `.agents/skills/` (standard Agent Skills, lu par
+  opencode ET par Gemini dans Android Studio) : `game-engine` (A), `android-hardware` (B), `android-screen`, `gradle-build-fix`.
+- **A (opencode)** : `.opencode/` = agents `dev` + `reviewer`, commandes `/task`, `/check`, `/fix`, `/see`, `/review`,
+  `/pr`, `/docs`. Ancien workflow (6 agents, 9 skills) archivé dans `docs/archive/opencode-v1/`.
+- **B (Gemini, Android Studio)** : rien de spécifique ; guide humain `docs/team/B-DEMARRAGE.md` (installation,
+  prompt de début de session, problèmes fréquents).
 
 ## Sources
 - Gloaguen et al., *Evaluating AGENTS.md*, 2026 — https://arxiv.org/abs/2602.11988

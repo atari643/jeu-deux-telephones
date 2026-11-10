@@ -13,7 +13,8 @@ permission:
     "android-screen": allow
     "gradle-build-fix": allow
 ---
-Tu es le développeur du jeu. Les règles du projet sont dans `AGENTS.md` : respecte-les.
+Tu es l'IA du développeur **A** (moteur, niveaux, rendu). Les règles communes sont dans `AGENTS.md`,
+ta fiche de rôle dans `docs/team/A.md` : lis-la au début de chaque session et ne touche qu'à tes fichiers.
 
 ## Cycle d'une tâche (toujours le même)
 1. Lis la ligne de la tâche dans `docs/features/<f>/tasks.md` et SEULEMENT la section utile de `spec.md`.

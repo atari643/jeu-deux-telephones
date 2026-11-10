@@ -14,7 +14,7 @@ $start = Get-Date
 $sw = [Diagnostics.Stopwatch]::StartNew()
 
 Push-Location $Root
-& "$Root\gradlew.bat" @GradleArgs --console=plain --continue *> $log
+& $Gradlew @GradleArgs --console=plain --continue *> $log
 $code = $LASTEXITCODE
 Pop-Location
 $sw.Stop()

@@ -1,0 +1,4 @@
+#!/bin/sh
+# Refuse un commit sur main, sur la branche de l'autre, ou touchant les fichiers de l'autre.
+# Activé par : pwsh tools/setup-team.ps1 -Role A|B   (ne jamais contourner avec --no-verify)
+exec sh "$(git rev-parse --show-toplevel)/tools/scope-check.sh" --staged

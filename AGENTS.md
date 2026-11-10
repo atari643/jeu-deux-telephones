@@ -4,6 +4,15 @@ Téléphone A = personnage (déplacements, sauts) et HÔTE qui simule le jeu. T�
 (rotation du niveau). Liaison TCP sur le Wi-Fi local. 5 capteurs. Décisions : `docs/decisions/`.
 Deux développeurs, chacun avec une IA différente : ce fichier et le CI sont les seules règles communes.
 
+## Équipe : lis ceci AVANT toute action
+1. Ton rôle : `git config team.role` (A ou B), sinon le préfixe de ta branche (`a/`, `b/`). Inconnu -> demande à l'humain.
+2. Lis ta fiche : `docs/team/A.md` (moteur, niveaux, rendu) ou `docs/team/B.md` (capteurs, liaison, entrées, lobby).
+3. Ne modifie QUE tes fichiers (`.github/ownership.txt`). Le hook git et le CI refusent le reste.
+4. Branches : `a/<NN-feature>` ou `b/<NN-feature>` depuis `main` à jour ; `commun/<sujet>` pour le commun.
+   Jamais de commit ni de push sur `main`, jamais `--no-verify`, jamais `push --force`, jamais la branche de l'autre.
+5. Besoin d'un changement chez l'autre ou dans `game/contract/` : écris-le dans `docs/team/demandes.md`, puis STOP.
+6. Avant de commencer : `git switch main && git pull`, puis crée ou reprends ta branche et `git merge main`.
+
 ## Stack FIGÉE
 - Kotlin 2.4, AGP 9 (Kotlin intégré, PAS de plugin `kotlin-android`), un seul module `:app`, targetSdk 36.
 - Compose + Material3 (jamais de XML layout/Fragment/LiveData/RxJava/Hilt), MVVM, Koin, kotlinx-serialization.
@@ -14,6 +23,7 @@ Deux développeurs, chacun avec une IA différente : ce fichier et le CI sont le
 ```
 game/contract/   messages réseau, GameState, Inputs, interfaces (GameLink, SensorSource, Engine). FIGÉ.
 game/engine/     moteur pur Kotlin : step(state, inputs) à pas fixe, GameConfig, niveaux. AUCUN import Android.
+game/input/      InputMapper : lectures capteurs -> Inputs. Pur Kotlin.
 data/link/       TcpGameLink (java.net), InMemoryLinkPair (tests + partenaire simulé)
 data/sensors/    AndroidSensorSource (callbackFlow autour de SensorManager)
 ui/<ecran>/      <E>UiState.kt, <E>ViewModel.kt, <E>Screen.kt (modèle à copier : ui/notes/)

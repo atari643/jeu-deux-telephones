@@ -11,6 +11,21 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Chaque PR ne touche que les fichiers du propriétaire de sa branche (a/, b/, commun/) : .github/ownership.txt
+  scope:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Périmètre de la branche
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: sh tools/scope-check.sh --ci "$HEAD_REF" "$BASE_REF"
+
   check:
     runs-on: ubuntu-latest
     timeout-minutes: 30
