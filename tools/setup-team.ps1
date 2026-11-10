@@ -19,7 +19,8 @@ $doc = "docs/team/$Role.md"
 $mine = Get-Content .github/ownership.txt | Where-Object { $_ -match "^$Role\s+(\S+)" } | ForEach-Object { ($_ -split '\s+')[1] }
 
 Write-Output "Tu es $Role. Rôle et hooks installés (git config team.role=$Role, core.hooksPath=.githooks)."
-Write-Output "Tes branches : $prefix/<NN-feature>   (ex. git switch -c $prefix/02-liaison-tcp)"
+$example = if ($Role -eq 'A') { 'a/01-moteur' } else { 'b/02-liaison-tcp' }
+Write-Output "Tes branches : $prefix/<NN-feature>   (ex. git switch -c $example)"
 Write-Output "Ta fiche pour ton IA : $doc"
 Write-Output 'Tes fichiers :'
 $mine | ForEach-Object { Write-Output "  $_" }
