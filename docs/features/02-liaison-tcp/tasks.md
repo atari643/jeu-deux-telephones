@@ -6,4 +6,4 @@ Cocher `[x]` seulement quand `pwsh tools/check.ps1` est vert. Chemins relatifs �
 - [ ] 2. [B] Erreurs et fermeture — `TcpGameLink.kt`, `TcpGameLinkFactory.kt` — test : `TcpGameLinkErrorTest` (CA2, CA3)
 - [ ] 3. [B] Poignée de main — `data/link/Handshake.kt` — test : `HandshakeTest` avec `InMemoryLinkPair` (CA4)
 - [ ] 4. [B] IP locale — `data/link/LocalAddressProvider.kt` (interface + impl Android) — test : `LocalAddressProviderTest` Robolectric ou fake (CA5)
-- [ ] 5. [B] Câblage — `di/AppModule.kt` (remplacer la fabrique mémoire par `TcpGameLinkFactory`) — test : `AppModuleTest` vert
+- [ ] 5. [B] Câblage — `di/AppModule.kt`, bloc `// --- B ---` (remplacer la fabrique mémoire par `TcpGameLinkFactory`) — test : `AppModuleTest` vert

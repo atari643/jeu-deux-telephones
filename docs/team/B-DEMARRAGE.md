@@ -41,11 +41,11 @@ Puis ouvre le dossier dans Android Studio (File > Open).
 
 ## 5. Ta toute première branche : `b/00-prise-en-main` (déjà créée, aucun code)
 ```
-git switch b/00-prise-en-main
+git switch main && git pull
+git switch b/00-prise-en-main && git merge main
 ```
-Demande à Gemini : *« Je suis B. Lis AGENTS.md, docs/team/B.md, docs/WORKFLOW.md et docs/decisions/. Puis relis
-mes specs docs/features/02-liaison-tcp, 03-capteurs et 06-lobby-connexion : propose des corrections, et écris
-les questions pour A dans docs/team/demandes.md. »* Valide, commit, push, PR. Pendant ce temps A prépare
+Puis, une session par point 0.1 à 0.5 de `docs/team/B.md`, par exemple : *« Je suis B. Lis AGENTS.md et
+docs/team/B.md. Fais le point 0.3 de la prise en main sur la branche b/00-prise-en-main. »* Valide, commit, push, PR. Pendant ce temps A prépare
 `commun/00-contrat` : relis sa PR avec Gemini (« relis cette PR contre AGENTS.md et docs/features/00-contrat/spec.md »).
 
 ## 6. Problèmes fréquents

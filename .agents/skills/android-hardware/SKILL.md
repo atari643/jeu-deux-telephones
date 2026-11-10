@@ -10,7 +10,7 @@ description: Code matériel du développeur B - capteurs Android (SensorManager 
 · `SensorType { GAME_ROTATION, ACCELEROMETER, GYROSCOPE, PROXIMITY, LIGHT }`
 · `GameLink { state: StateFlow<LinkState>; incoming: Flow<NetMessage>; send(m); close() }` · `GameLinkFactory { host(port); join(ip, port) }`
 · `GameSession` (le lobby la remplit) · `InputSource.inputs(role)` (tu l'implémentes) · `NetCodec` (encode/décode une ligne JSON)
-· `Inputs(moveX, jump, worldAngleDeg, darkWorld)`. Décisions : `docs/decisions/0001` (TCP), `0003` (capteurs).
+· `Inputs(moveX, jump, worldAngleDeg, darkWorld, special)`. Décisions : `docs/decisions/0001` (TCP), `0003` (capteurs).
 
 ## Capteurs — `data/sensors/AndroidSensorSource.kt`
 ```kotlin
