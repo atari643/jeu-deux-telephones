@@ -3,8 +3,8 @@ package com.example.app.game.engine
 /**
  * Constantes du moteur (jamais de magic number dans [GameEngine]).
  * Le moteur est un pas fixe à [TICK_RATE] pas par seconde, indépendant du
- * temps réel ; la gravité, la vitesse et les niveaux arriveront avec la
- * feature 01-moteur.
+ * temps réel. Toutes les vitesses et accélérations sont exprimées en
+ * tuiles / seconde (ou tuiles / seconde²).
  */
 object GameConfig {
 
@@ -13,6 +13,18 @@ object GameConfig {
 
     /** Durée d'un pas de simulation en secondes (1/60, jamais le temps réel). */
     const val STEP_SECONDS: Double = 1.0 / 60.0
+
+    /** Accélération gravitaire vers le bas (tuiles/s²) quand le monde n'est pas tourné. */
+    const val GRAVITY: Double = 24.0
+
+    /** Vitesse de course horizontale à `moveX = ±1` (tuiles/s). */
+    const val RUN_SPEED: Double = 6.0
+
+    /** Vitesse initiale vers le haut d'un saut au sol (tuiles/s). */
+    const val JUMP_SPEED: Double = 12.0
+
+    /** Vitesse de chute maximale (tuiles/s), pour rester borné et déterministe. */
+    const val MAX_FALL_SPEED: Double = 20.0
 
     /** Identifiant du niveau de départ. */
     const val START_LEVEL_ID: String = "01-flat"
