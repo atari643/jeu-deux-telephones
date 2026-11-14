@@ -32,6 +32,22 @@ object TestLevels {
             )
         )
 
+    /**
+     * Niveau haut avec plafond (sol à y = 5) : l'apex d'un saut complet vaut
+     * environ 3 tuiles, le joueur ne sort jamais du niveau (CA2).
+     */
+    val tall: Level =
+        Level(
+            listOf(
+                "##########",
+                "..........",
+                "..........",
+                "..........",
+                "#S......E#",
+                "##########"
+            )
+        )
+
     /** Un mur plein au milieu (x = 4) pour les collisions horizontales (CA1). */
     val withWall: Level =
         Level(

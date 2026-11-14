@@ -8,11 +8,10 @@ import com.example.app.game.contract.PlayerState
 import kotlin.math.floor
 
 /**
- * Moteur du jeu : pas fixe, gravité, collisions horizontales et verticales
- * avec les tuiles.
+ * Moteur du jeu : pas fixe, gravité, saut (CA2), collisions horizontales et
+ * verticales avec les tuiles.
  *
- * Le saut (CA2) arrive dans la tâche 4 ; la rotation du monde (CA4) dans la
- * tâche 5.
+ * La rotation du monde (CA4) arrive dans la tâche 5.
  */
 class GameEngine(private val level: Level) : Engine {
 
@@ -26,7 +25,10 @@ class GameEngine(private val level: Level) : Engine {
         val p = state.player
 
         // --- Gravité (toujours vers le bas ; rotation = tâche 5) ---
-        val newVy = (p.vy + GameConfig.GRAVITY * dt).coerceAtMost(GameConfig.MAX_FALL_SPEED)
+        val vyAfterGravity = (p.vy + GameConfig.GRAVITY * dt).coerceAtMost(GameConfig.MAX_FALL_SPEED)
+
+        // --- Saut (CA2) : uniquement depuis le sol ; ignoré en l'air ---
+        val newVy = if (inputs.jump && p.onGround) -GameConfig.JUMP_SPEED else vyAfterGravity
 
         // --- Nouvelle position ---
         val newVx = inputs.moveX * GameConfig.RUN_SPEED
