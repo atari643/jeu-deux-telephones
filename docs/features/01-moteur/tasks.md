@@ -8,4 +8,4 @@ Cocher `[x]` seulement quand `pwsh tools/check.ps1` est vert. Chemins relatifs �
 - [x] 4. [A] Saut — `GameEngine.kt` — test : `GameEngineJumpTest` (CA2)
 - [x] 5. [A] Rotation du monde — `game/engine/Gravity.kt`, `GameEngine.kt` — test : `GameEngineRotationTest` (CA4)
 - [x] 6. [A] Victoire / défaite — `GameEngine.kt` — test : `GameEngineStatusTest` (CA3 LOST, CA5)
-- [ ] 7. [A] Déterminisme — test seul : `GameEngineDeterminismTest` (CA6)
+- [x] 7. [A] Déterminisme — test seul : `GameEngineDeterminismTest` (CA6)
