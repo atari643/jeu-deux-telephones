@@ -9,12 +9,12 @@ import org.junit.Test
 
 class GameEngineTest {
 
-    private val engine = GameEngine()
+    private val engine = GameEngine(TestLevels.flat)
 
     private val start =
         GameState(
             tick = 0L,
-            player = PlayerState(x = 3.0, y = 2.0, vx = 0.0, vy = 0.0, onGround = true),
+            player = PlayerState(x = 1.5, y = 1.5, vx = 0.0, vy = 0.0, onGround = true),
             worldAngleDeg = 0.0,
             levelId = "test",
             status = GameStatus.RUNNING
@@ -23,18 +23,12 @@ class GameEngineTest {
     private fun run(steps: Int) = (1..steps).fold(start) { s, _ -> engine.step(s, Inputs()) }
 
     @Test
-    fun `when one step then tick is incremented by one (CA4)`() {
+    fun `when one step then tick is incremented by one`() {
         assertEquals(1L, engine.step(start, Inputs()).tick)
     }
 
     @Test
-    fun `when N steps then tick is incremented N times (CA4)`() {
+    fun `when N steps then tick is incremented N times`() {
         assertEquals(42L, run(42).tick)
-    }
-
-    @Test
-    fun `when steps then player and the rest of the state are unchanged (CA4)`() {
-        val after = run(10)
-        assertEquals(start, after.copy(tick = start.tick))
     }
 }

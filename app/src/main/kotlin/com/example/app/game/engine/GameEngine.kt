@@ -2,15 +2,68 @@ package com.example.app.game.engine
 
 import com.example.app.game.contract.Engine
 import com.example.app.game.contract.GameState
+import com.example.app.game.contract.GameStatus
 import com.example.app.game.contract.Inputs
+import com.example.app.game.contract.PlayerState
+import kotlin.math.floor
 
 /**
- * Moteur du jeu (stub de la feature 00-contrat, CA4) : implémentation minimale
- * de [Engine] qui n'incrémente que [GameState.tick] et ne fait rien d'autre.
- * La physique réelle (gravité orientée, collisions, niveaux) arrive dans la
- * feature 01-moteur, toujours sur ce même pas fixe [GameConfig.STEP_SECONDS].
+ * Moteur du jeu : pas fixe, gravité, collisions verticales avec les tuiles.
+ *
+ * Le mouvement horizontal (CA1) arrive dans la tâche 3 ; le saut (CA2) dans la
+ * tâche 4 ; la rotation du monde (CA4) dans la tâche 5.
  */
-class GameEngine : Engine {
+class GameEngine(private val level: Level) : Engine {
 
-    override fun step(state: GameState, inputs: Inputs): GameState = state.copy(tick = state.tick + 1)
+    override fun step(state: GameState, inputs: Inputs): GameState {
+        // En WON / LOST, plus rien ne change sauf le tick.
+        if (state.status != GameStatus.RUNNING) {
+            return state.copy(tick = state.tick + 1)
+        }
+
+        val dt = GameConfig.STEP_SECONDS
+        val p = state.player
+
+        // --- Gravité (toujours vers le bas ; rotation = tâche 5) ---
+        val newVy = (p.vy + GameConfig.GRAVITY * dt).coerceAtMost(GameConfig.MAX_FALL_SPEED)
+
+        // --- Nouvelle position (pas de mouvement horizontal : tâche 3) ---
+        val newX = p.x
+        val newY = p.y + newVy * dt
+
+        // --- Résolution de la collision verticale ---
+        var resolvedY = newY
+        var resolvedVy = newVy
+        var onGround = false
+        val tileX = floor(newX).toInt()
+        val tileY = floor(newY).toInt()
+
+        if (level.isSolid(tileX, tileY)) {
+            if (newVy >= 0.0) {
+                // Chute : on repousse le joueur sur le dessus de la tuile.
+                resolvedY = tileY.toDouble()
+                resolvedVy = 0.0
+                onGround = true
+            } else {
+                // Montée (saut contre un plafond) : on repousse sous la tuile.
+                resolvedY = (tileY + 1).toDouble()
+                resolvedVy = 0.0
+            }
+        }
+
+        // --- Défaite : sortie du niveau (CA3) ---
+        val lost = Collisions.isOutOfBounds(level, newX, resolvedY)
+
+        return state.copy(
+            tick = state.tick + 1,
+            player = PlayerState(
+                x = newX,
+                y = resolvedY,
+                vx = 0.0,
+                vy = resolvedVy,
+                onGround = onGround
+            ),
+            status = if (lost) GameStatus.LOST else state.status
+        )
+    }
 }
