@@ -5,7 +5,7 @@ Cocher `[x]` seulement quand `pwsh tools/check.ps1` est vert.
 - [x] 1. [A] Types d'état — `game/contract/GameState.kt` (PlayerState, GameState, GameStatus), `game/contract/Inputs.kt` — test : `GameStateTest` (CA1)
 - [x] 2. [A] Messages — `game/contract/NetMessage.kt` (+ Role), `game/contract/NetCodec.kt` — test : `NetCodecTest` aller-retour de chaque message (CA2)
 - [x] 3. [A] Interfaces réseau — `game/contract/GameLink.kt` (GameLink, LinkState, GameLinkFactory), `game/contract/GameSession.kt` — compile
-- [ ] 4. [A] Interfaces capteurs/moteur — `game/contract/Sensors.kt` (SensorType, SensorReading, SensorSource, InputSource), `game/contract/Engine.kt` — compile
+- [x] 4. [A] Interfaces capteurs/moteur — `game/contract/Sensors.kt` (SensorType, SensorReading, SensorSource, InputSource), `game/contract/Engine.kt` — compile
 - [ ] 5. [A] Liaison mémoire — `data/link/InMemoryLinkPair.kt`, `data/link/InMemoryGameSession.kt` — test : `InMemoryLinkPairTest` avec Turbine (CA3)
 - [ ] 6. [A] Moteur stub + fakes — `game/engine/GameEngine.kt`, `game/engine/GameConfig.kt` ; tests : `testing/FakeSensorSource.kt`, `FakeInputSource.kt`, `FakeGameLinkFactory.kt`, `GameEngineTest` (CA4)
 - [ ] 7. [A] Écran Lobby (squelette) — `ui/lobby/LobbyUiState.kt`, `LobbyViewModel.kt`, `LobbyScreen.kt` — tests : `LobbyViewModelTest`, `LobbyScreenTest` (CA5)
