@@ -7,6 +7,16 @@
     <string name="notes_delete">Supprimer %1$s</string>
     <string name="notes_empty">Aucune note pour l\'instant</string>
     <string name="notes_error_blank">Le titre ne peut pas être vide</string>
+    <string name="lobby_title">Lobby</string>
+    <string name="lobby_role_label">Rôle</string>
+    <string name="lobby_role_character">Personnage</string>
+    <string name="lobby_role_environment">Environnement</string>
+    <string name="lobby_ip_label">IP</string>
+    <string name="lobby_port_label">Port</string>
+    <string name="lobby_start">Démarrer</string>
+    <string name="lobby_simulated">Partenaire simulé</string>
+    <string name="lobby_error_role">Choisis d\'abord un rôle</string>
+    <string name="lobby_error_port">Port invalide</string>
     <string name="about_title">À propos</string>
     <string name="about_back">Retour</string>
     <string name="about_version">Version %1$s</string>

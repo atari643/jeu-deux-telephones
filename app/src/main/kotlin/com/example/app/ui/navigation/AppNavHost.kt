@@ -5,6 +5,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.app.ui.about.AboutRoute
+import com.example.app.ui.game.GameRoute
+import com.example.app.ui.lobby.LobbyRoute
 import com.example.app.ui.notes.NotesRoute
 import kotlinx.serialization.Serializable
 
@@ -15,10 +17,23 @@ data object NotesDestination
 @Serializable
 data object AboutDestination
 
+/** Ecran de depart : on choisit le role, puis on part en jeu. */
+@Serializable
+data object LobbyDestination
+
+@Serializable
+data object GameDestination
+
 @Composable
 fun AppNavHost() {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = NotesDestination) {
+    NavHost(navController = navController, startDestination = LobbyDestination) {
+        composable<LobbyDestination> {
+            LobbyRoute()
+        }
+        composable<GameDestination> {
+            GameRoute()
+        }
         composable<NotesDestination> {
             NotesRoute(onNavigateToAbout = { navController.navigate(AboutDestination) })
         }
