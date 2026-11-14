@@ -4,7 +4,7 @@ Cocher `[x]` seulement quand `pwsh tools/check.ps1` est vert. Chemins relatifs �
 
 - [x] 1. [A] Niveau et constantes — `game/engine/Level.kt`, `game/engine/GameConfig.kt` (compléter) ; test : `game/engine/TestLevels.kt` + `LevelTest`
 - [x] 2. [A] Gravité et sol — `game/engine/GameEngine.kt`, `game/engine/Collisions.kt` — test : `GameEngineGravityTest` (CA3 chute)
-- [ ] 3. [A] Déplacement et murs — `GameEngine.kt`, `Collisions.kt` — test : `GameEngineMoveTest` (CA1)
+- [x] 3. [A] Déplacement et murs — `GameEngine.kt`, `Collisions.kt` — test : `GameEngineMoveTest` (CA1)
 - [ ] 4. [A] Saut — `GameEngine.kt` — test : `GameEngineJumpTest` (CA2)
 - [ ] 5. [A] Rotation du monde — `game/engine/Gravity.kt`, `GameEngine.kt` — test : `GameEngineRotationTest` (CA4)
 - [ ] 6. [A] Victoire / défaite — `GameEngine.kt` — test : `GameEngineStatusTest` (CA3 LOST, CA5)
