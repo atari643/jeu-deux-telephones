@@ -3,6 +3,8 @@ package com.example.app.ui.catalog
 import androidx.compose.runtime.Composable
 import com.example.app.ui.about.AboutPreviewData
 import com.example.app.ui.about.AboutScreen
+import com.example.app.ui.game.GamePreviewData
+import com.example.app.ui.game.GameScreen
 import com.example.app.ui.lobby.LobbyPreviewData
 import com.example.app.ui.lobby.LobbyScreen
 import com.example.app.ui.notes.NotesPreviewData
@@ -19,5 +21,6 @@ val screenCatalog: Map<String, @Composable () -> Unit> = mapOf(
     "NotesScreen_error" to { NotesScreen(state = NotesPreviewData.error, onEvent = {}) },
     "NotesScreen_loading" to { NotesScreen(state = NotesPreviewData.loading, onEvent = {}) },
     "AboutScreen_default" to { AboutScreen(state = AboutPreviewData.default, onBackClick = {}) },
-    "LobbyScreen_default" to { LobbyScreen(state = LobbyPreviewData.default, onEvent = {}) }
+    "LobbyScreen_default" to { LobbyScreen(state = LobbyPreviewData.default, onEvent = {}) },
+    "GameScreen_default" to { GameScreen(state = GamePreviewData.default) }
 )
