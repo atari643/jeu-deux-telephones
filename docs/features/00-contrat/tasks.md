@@ -10,5 +10,5 @@ Cocher `[x]` seulement quand `pwsh tools/check.ps1` est vert.
 - [x] 6. [A] Moteur stub + fakes — `game/engine/GameEngine.kt`, `game/engine/GameConfig.kt` ; tests : `testing/FakeSensorSource.kt`, `FakeInputSource.kt`, `FakeGameLinkFactory.kt`, `GameEngineTest` (CA4)
 - [x] 7. [A] Écran Lobby (squelette) — `ui/lobby/LobbyUiState.kt`, `LobbyViewModel.kt`, `LobbyScreen.kt` — tests : `LobbyViewModelTest`, `LobbyScreenTest` (CA5)
 - [x] 8. [A] Écran Game (squelette) — `ui/game/GameUiState.kt`, `GameViewModel.kt` (Engine + GameSession), `GameScreen.kt` (Canvas) — tests : `GameViewModelTest`, `GameScreenTest` (CA6)
-- [ ] 9. [A] Câblage — `di/AppModule.kt`, `ui/navigation/AppNavHost.kt` (Lobby au départ), `strings.xml`, `ScreenCatalog.kt` — `pwsh tools/see.ps1 LobbyScreen` et `GameScreen` (CA5-CA7)
+- [x] 9. [A] Câblage — `di/AppModule.kt`, `ui/navigation/AppNavHost.kt` (Lobby au départ), `strings.xml`, `ScreenCatalog.kt` — `pwsh tools/see.ps1 LobbyScreen` et `GameScreen` (CA5-CA7)
 - [ ] 10. [B] Relire la PR `commun/00-contrat` avec son IA (contrat clair ? message ou champ manquant pour 02/03/06 ?) et approuver
