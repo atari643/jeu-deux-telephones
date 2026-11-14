@@ -11,9 +11,7 @@ import kotlinx.coroutines.flow.asSharedFlow
  * [SensorSource] en mémoire pour les tests : on pousse des lectures avec [emit]
  * et on les lit sur [readings]. Aucun capteur Android, aucun temps réel.
  */
-class FakeSensorSource(
-    private val types: Set<SensorType> = SensorType.entries.toSet()
-) : SensorSource {
+class FakeSensorSource(private val types: Set<SensorType> = SensorType.entries.toSet()) : SensorSource {
 
     private val flow = MutableSharedFlow<SensorReading>(extraBufferCapacity = Int.MAX_VALUE)
 
