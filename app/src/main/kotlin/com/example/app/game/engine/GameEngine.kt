@@ -9,7 +9,8 @@ import kotlin.math.floor
 
 /**
  * Moteur du jeu : pas fixe, gravité, saut (CA2), collisions horizontales et
- * verticales avec les tuiles, rotation du monde (CA4).
+ * verticales avec les tuiles, rotation du monde (CA4), victoire et défaite
+ * (CA3, CA5).
  *
  * Le niveau ne bouge pas : la gravité est tournée par [Gravity.vector] selon
  * `inputs.worldAngleDeg`.
@@ -72,6 +73,9 @@ class GameEngine(private val level: Level) : Engine {
         // --- Défaite : sortie du niveau (CA3) ---
         val lost = Collisions.isOutOfBounds(level, resolvedX, resolvedY)
 
+        // --- Victoire : se tenir sur la tuile de sortie (CA5) ---
+        val reachedExit = isOnExit(resolvedX, resolvedY)
+
         return state.copy(
             tick = state.tick + 1,
             player = PlayerState(
@@ -81,7 +85,20 @@ class GameEngine(private val level: Level) : Engine {
                 vy = resolvedVy,
                 onGround = onGround
             ),
-            status = if (lost) GameStatus.LOST else state.status
+            status = when {
+                reachedExit -> GameStatus.WON
+                lost -> GameStatus.LOST
+                else -> state.status
+            }
         )
     }
+
+    /**
+     * Victoire (CA5) : le joueur (point situé aux pieds) est posé SUR la tuile
+     * de sortie — x dans la colonne de la tuile et les pieds sur sa face haute
+     * (la ligne juste sous la sortie). Traverser la rangée de la sortie en
+     * l'air (rotation du monde, CA4) ne compte pas.
+     */
+    private fun isOnExit(x: Double, y: Double): Boolean =
+        floor(x).toInt() == level.exit.x && floor(y).toInt() == level.exit.y + 1
 }
