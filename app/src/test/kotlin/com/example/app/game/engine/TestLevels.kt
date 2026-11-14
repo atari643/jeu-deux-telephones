@@ -58,6 +58,20 @@ object TestLevels {
             )
         )
 
+    /**
+     * Sol avec un ravin (x = 3..6) et une colonne de mur CONTINUE en x = 9
+     * (rangées 0 et 1) : quand le joueur « tombe » sur le côté (CA4), la
+     * collision le retient sur toute l'épaisseur du mur.
+     */
+    val withWallColumn: Level =
+        Level(
+            listOf(
+                ".........#",
+                "#S......E#",
+                "###....###"
+            )
+        )
+
     /** État de départ (RUNNING, joueur au centre de la tuile [Level.start]). */
     fun startFor(level: Level): GameState =
         GameState(

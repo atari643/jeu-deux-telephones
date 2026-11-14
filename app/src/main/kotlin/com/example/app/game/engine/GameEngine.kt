@@ -9,9 +9,10 @@ import kotlin.math.floor
 
 /**
  * Moteur du jeu : pas fixe, gravité, saut (CA2), collisions horizontales et
- * verticales avec les tuiles.
+ * verticales avec les tuiles, rotation du monde (CA4).
  *
- * La rotation du monde (CA4) arrive dans la tâche 5.
+ * Le niveau ne bouge pas : la gravité est tournée par [Gravity.vector] selon
+ * `inputs.worldAngleDeg`.
  */
 class GameEngine(private val level: Level) : Engine {
 
@@ -24,14 +25,25 @@ class GameEngine(private val level: Level) : Engine {
         val dt = GameConfig.STEP_SECONDS
         val p = state.player
 
-        // --- Gravité (toujours vers le bas ; rotation = tâche 5) ---
-        val vyAfterGravity = (p.vy + GameConfig.GRAVITY * dt).coerceAtMost(GameConfig.MAX_FALL_SPEED)
+        // --- Gravité tournée par l'angle du monde (CA4) : le niveau ne bouge pas ---
+        val g = Gravity.vector(inputs.worldAngleDeg)
+
+        // --- Vertical (CA3) : gravité tournée, accumulée, bornée ---
+        val vyAfterGravity =
+            (p.vy + g.y * dt).coerceIn(-GameConfig.MAX_FALL_SPEED, GameConfig.MAX_FALL_SPEED)
 
         // --- Saut (CA2) : uniquement depuis le sol ; ignoré en l'air ---
         val newVy = if (inputs.jump && p.onGround) -GameConfig.JUMP_SPEED else vyAfterGravity
 
+        // --- Horizontal (CA1 + CA4) : la course pilote la vitesse ; sans course,
+        //     la composante horizontale de la gravité fait « tomber » sur le côté ---
+        val newVx = when {
+            inputs.moveX != 0.0 -> inputs.moveX * GameConfig.RUN_SPEED
+            g.x == 0.0 -> 0.0
+            else -> (p.vx + g.x * dt).coerceIn(-GameConfig.MAX_FALL_SPEED, GameConfig.MAX_FALL_SPEED)
+        }
+
         // --- Nouvelle position ---
-        val newVx = inputs.moveX * GameConfig.RUN_SPEED
         val newY = p.y + newVy * dt
 
         // --- Résolution de la collision horizontale (CA1) ---

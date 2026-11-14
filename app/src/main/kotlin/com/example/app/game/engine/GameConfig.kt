@@ -1,5 +1,7 @@
 package com.example.app.game.engine
 
+import kotlin.math.PI
+
 /**
  * Constantes du moteur (jamais de magic number dans [GameEngine]).
  * Le moteur est un pas fixe à [TICK_RATE] pas par seconde, indépendant du
@@ -13,6 +15,9 @@ object GameConfig {
 
     /** Durée d'un pas de simulation en secondes (1/60, jamais le temps réel). */
     const val STEP_SECONDS: Double = 1.0 / 60.0
+
+    /** Conversion de degrés en radians (rotation du monde, CA4). */
+    const val DEG_TO_RAD: Double = PI / 180.0
 
     /** Accélération gravitaire vers le bas (tuiles/s²) quand le monde n'est pas tourné. */
     const val GRAVITY: Double = 24.0
