@@ -40,4 +40,11 @@ object GameConfig {
      * au telephone environnement (04-rendu CA2) : un snapshot tous les N pas.
      */
     const val SNAPSHOT_EVERY_N_STEPS: Long = 2L
+
+    /**
+     * Frequence a laquelle l'environnement (role ENVIRONMENT) envoie un
+     * [NetMessage.EnvInput] a l'hote (04-rendu CA3) : un EnvInput tous les N pas,
+     * soit ~30 envois/s a [TICK_RATE] = 60 pas/s.
+     */
+    const val ENV_INPUT_EVERY_N_STEPS: Long = 2L
 }

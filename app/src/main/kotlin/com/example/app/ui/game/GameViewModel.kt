@@ -38,6 +38,11 @@ private const val STOP_TIMEOUT_MS = 5_000L
  * de chaque pas = ceux de l'[InputSource] fusionnes avec le dernier
  * [NetMessage.EnvInput] recu ; un [NetMessage.Snapshot] est envoye a
  * l'autre telephone tous les [GameConfig.SNAPSHOT_EVERY_N_STEPS] pas.
+ *
+ * Role ENVIRONMENT (04-rendu CA3) : ne simule pas ; l'etat affiche est le
+ * dernier [NetMessage.Snapshot] recu, la propre rotation est exposee a jour
+ * via [GameUiState.liveWorldAngleDeg], et des [NetMessage.EnvInput] sont
+ * envoyes tous les [GameConfig.ENV_INPUT_EVERY_N_STEPS] pas (~30/s).
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class GameViewModel(private val engine: Engine, session: GameSession, private val inputSource: InputSource) : ViewModel() {
@@ -54,20 +59,25 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
 
     private val game = MutableStateFlow<GameState?>(null)
     private val charInput = MutableStateFlow(Inputs())
+    private val envInput = MutableStateFlow(Inputs())
     private val lastEnvInput = MutableStateFlow<NetMessage.EnvInput?>(null)
+    private val liveWorldAngle = MutableStateFlow<Double?>(null)
     private val stepNanos: Long = (GameConfig.STEP_SECONDS * 1_000_000_000L).toLong()
 
     private var inputJob: Job? = null
     private var incomingJob: Job? = null
     private var lastFrameNanos: Long? = null
     private var accumulatorNanos = 0L
+    private var envStepCount = 0L
+    private var envSeq = 0L
 
     val uiState: StateFlow<GameUiState> =
-        combine(role, linkState, game) { currentRole, currentLinkState, currentGame ->
+        combine(role, linkState, game, liveWorldAngle) { currentRole, currentLinkState, currentGame, currentAngle ->
             GameUiState(
                 role = currentRole,
                 linkState = currentLinkState,
                 game = currentGame,
+                liveWorldAngleDeg = if (currentRole == Role.ENVIRONMENT) currentAngle else null,
                 error = if (currentRole == null) GameError.NoSession else null
             )
         }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(STOP_TIMEOUT_MS), GameUiState(error = GameError.NoSession))
@@ -83,8 +93,26 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
                 lastFrameNanos = null
                 accumulatorNanos = 0L
                 if (currentRole != null) {
-                    game.value = initialGame()
-                    inputJob = launch { inputSource.inputs(currentRole).collect { charInput.value = it } }
+                    // CA3 : seul l'hote (CHARACTER) possede un etat initial ;
+                    // l'environnement n'affiche que les Snapshots recus.
+                    if (currentRole == Role.CHARACTER) game.value = initialGame()
+                    liveWorldAngle.value = null
+                    envInput.value = Inputs()
+                    envStepCount = 0L
+                    envSeq = 0L
+                    inputJob = launch {
+                        inputSource.inputs(currentRole).collect { input ->
+                            when (currentRole) {
+                                Role.CHARACTER -> charInput.value = input
+
+                                Role.ENVIRONMENT -> {
+                                    envInput.value = input
+                                    // CA3 : la propre rotation est exposee a jour, sans attendre le snapshot.
+                                    liveWorldAngle.value = input.worldAngleDeg
+                                }
+                            }
+                        }
+                    }
                     incomingJob = launch {
                         link.flatMapLatest { currentLink -> currentLink?.incoming ?: flowOf() }
                             .collect { message ->
@@ -92,7 +120,11 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
                                     // CA2 : on garde le dernier angle recu (le plus recent l'emporte).
                                     is NetMessage.EnvInput -> lastEnvInput.value = message
 
-                                    // Les autres messages (Snapshot entrants, Hello, Ready, Ping...)
+                                    // CA3 : l'environnement affiche le dernier Snapshot recu.
+                                    is NetMessage.Snapshot ->
+                                        if (currentRole == Role.ENVIRONMENT) game.value = message.state
+
+                                    // Les autres messages (Hello, Ready, Ping...)
                                     // sont gerés par les autres tâches de la feature 04.
                                     else -> Unit
                                 }
@@ -112,17 +144,30 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
         }
     }
 
-    /** Accumule le temps reel et appelle [Engine.step] un nombre entier de fois (pas fixe). */
+    /**
+     * Accumule le temps reel et consomme des tranches de [stepNanos] : le role CHARACTER
+     * appelle [Engine.step] une fois par tranche (CA1/CA2), le role ENVIRONMENT envoie
+     * un [NetMessage.EnvInput] tous les [GameConfig.ENV_INPUT_EVERY_N_STEPS] pas (CA3).
+     */
     private fun stepFrame(timeNanos: Long) {
-        if (game.value == null) return
-        if (role.value != Role.CHARACTER) return
+        val currentRole = role.value ?: return
+        if (currentRole == Role.CHARACTER && game.value == null) return
         val previous = lastFrameNanos ?: timeNanos
         lastFrameNanos = timeNanos
         accumulatorNanos += (timeNanos - previous).coerceAtLeast(0L)
         while (accumulatorNanos >= stepNanos) {
             accumulatorNanos -= stepNanos
-            game.update { current -> if (current != null) engine.step(current, buildStepInputs()) else current }
-            sendSnapshotIfDue(game.value)
+            when (currentRole) {
+                Role.CHARACTER -> {
+                    game.update { current -> if (current != null) engine.step(current, buildStepInputs()) else current }
+                    sendSnapshotIfDue(game.value)
+                }
+
+                Role.ENVIRONMENT -> {
+                    envStepCount += 1
+                    if (envStepCount % GameConfig.ENV_INPUT_EVERY_N_STEPS == 0L) sendEnvInput()
+                }
+            }
         }
     }
 
@@ -147,6 +192,19 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
         if (newState != null && currentLink != null && newState.tick % GameConfig.SNAPSHOT_EVERY_N_STEPS == 0L) {
             viewModelScope.launch { currentLink.send(NetMessage.Snapshot(newState)) }
         }
+    }
+
+    /**
+     * CA3 : l'environnement envoie ses [NetMessage.EnvInput] (~30/s, tous les
+     * [GameConfig.ENV_INPUT_EVERY_N_STEPS] pas) a partir de la derniere lecture
+     * de l'[InputSource] (role ENVIRONMENT).
+     */
+    private fun sendEnvInput() {
+        val currentLink = link.value ?: return
+        val input = envInput.value
+        envSeq += 1
+        val message = NetMessage.EnvInput(seq = envSeq, angleDeg = input.worldAngleDeg, special = input.special)
+        viewModelScope.launch { currentLink.send(message) }
     }
 
     private fun initialGame() = GameState(
