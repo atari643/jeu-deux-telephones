@@ -77,6 +77,9 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
     fun onEvent(event: GameEvent) {
         when (event) {
             is GameEvent.Frame -> stepFrame(event.timeNanos)
+
+            // Fin de partie (WON/LOST) : gestion dans la tâche 6 de la feature 04.
+            GameEvent.Replay -> Unit
         }
     }
 

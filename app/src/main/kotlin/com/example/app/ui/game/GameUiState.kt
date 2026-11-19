@@ -5,7 +5,19 @@ import com.example.app.game.contract.LinkState
 import com.example.app.game.contract.Role
 
 /** Etat COMPLET de l'ecran, immuable. L'ecran n'affiche que ce qui est ici. */
-data class GameUiState(val role: Role? = null, val linkState: LinkState? = null, val game: GameState? = null, val error: GameError? = null)
+data class GameUiState(
+    val role: Role? = null,
+    val linkState: LinkState? = null,
+    /** Dernier etat a afficher : simulation locale (CHARACTER) ou dernier Snapshot (ENVIRONMENT). */
+    val game: GameState? = null,
+    /**
+     * Rotation du monde du role ENVIRONMENT, affichee tout de suite sans attendre le
+     * Snapshot (decision 0002) ; null pour le role CHARACTER (on dessine alors
+     * [GameState.worldAngleDeg] de [game]).
+     */
+    val liveWorldAngleDeg: Double? = null,
+    val error: GameError? = null
+)
 
 /** Erreurs metier sans Context : l'ecran les traduit en String via stringResource. */
 enum class GameError { NoSession }
@@ -18,4 +30,7 @@ sealed interface GameEvent {
      * le ViewModel accumule le temps et fait avancer le moteur a pas fixe.
      */
     data class Frame(val timeNanos: Long) : GameEvent
+
+    /** Bouton « Rejouer » du panneau de fin de partie (WON/LOST). */
+    data object Replay : GameEvent
 }
