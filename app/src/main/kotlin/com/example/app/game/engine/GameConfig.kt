@@ -1,5 +1,6 @@
 package com.example.app.game.engine
 
+import com.example.app.game.contract.NetMessage
 import kotlin.math.PI
 
 /**
@@ -33,4 +34,10 @@ object GameConfig {
 
     /** Identifiant du niveau de départ. */
     const val START_LEVEL_ID: String = "01-flat"
+
+    /**
+     * Frequence a laquelle l'hote (role CHARACTER) envoie un [NetMessage.Snapshot]
+     * au telephone environnement (04-rendu CA2) : un snapshot tous les N pas.
+     */
+    const val SNAPSHOT_EVERY_N_STEPS: Long = 2L
 }
