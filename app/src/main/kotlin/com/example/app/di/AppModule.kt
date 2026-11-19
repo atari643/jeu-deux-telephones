@@ -14,6 +14,7 @@ import com.example.app.game.contract.GameSession
 import com.example.app.game.contract.InputSource
 import com.example.app.game.contract.SensorSource
 import com.example.app.game.engine.GameEngine
+import com.example.app.game.engine.Level
 import com.example.app.game.input.InMemoryInputSource
 import com.example.app.ui.about.AboutViewModel
 import com.example.app.ui.game.GameViewModel
@@ -42,6 +43,7 @@ val appModule = module {
     viewModelOf(::AboutViewModel)
 
     // --- A : moteur, ecran de jeu (implementations de depart, CA7) ---
+    single { Level(listOf("..........", "#S......E#", "##########")) }
     singleOf(::GameEngine) { bind<Engine>() }
     viewModelOf(::GameViewModel)
 
