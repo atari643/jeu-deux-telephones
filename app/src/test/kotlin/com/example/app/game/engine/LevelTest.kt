@@ -2,6 +2,7 @@ package com.example.app.game.engine
 
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
+import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
 
@@ -60,53 +61,61 @@ class LevelTest {
         assertFalse(level.isSolid(0, level.height))
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `given an empty level when constructed then it throws (01-moteur)`() {
-        Level(emptyList())
+        assertThrows(IllegalArgumentException::class.java) { Level(emptyList()) }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `given a level without start when constructed then it throws (01-moteur)`() {
-        Level(
-            listOf(
-                "....",
-                "#E.#",
-                "####"
+        assertThrows(IllegalArgumentException::class.java) {
+            Level(
+                listOf(
+                    "....",
+                    "#E.#",
+                    "####"
+                )
             )
-        )
+        }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `given a level without exit when constructed then it throws (01-moteur)`() {
-        Level(
-            listOf(
-                "....",
-                "#S.#",
-                "####"
+        assertThrows(IllegalArgumentException::class.java) {
+            Level(
+                listOf(
+                    "....",
+                    "#S.#",
+                    "####"
+                )
             )
-        )
+        }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `given a level with two starts when constructed then it throws (01-moteur)`() {
-        Level(
-            listOf(
-                "....",
-                "#SES",
-                "####"
+        assertThrows(IllegalArgumentException::class.java) {
+            Level(
+                listOf(
+                    "....",
+                    "#SES",
+                    "####"
+                )
             )
-        )
+        }
     }
 
-    @Test(expected = IllegalArgumentException::class)
+    @Test
     fun `given a level with two exits when constructed then it throws (01-moteur)`() {
-        Level(
-            listOf(
-                "....",
-                "##EE",
-                "##S#",
-                "####"
+        assertThrows(IllegalArgumentException::class.java) {
+            Level(
+                listOf(
+                    "....",
+                    "##EE",
+                    "##S#",
+                    "####"
+                )
             )
-        )
+        }
     }
 }
