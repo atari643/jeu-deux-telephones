@@ -139,8 +139,28 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
         when (event) {
             is GameEvent.Frame -> stepFrame(event.timeNanos)
 
-            // Fin de partie (WON/LOST) : gestion dans la tâche 6 de la feature 04.
-            GameEvent.Replay -> Unit
+            // CA5 : bouton « Rejouer » du panneau de fin de partie (WON/LOST).
+            GameEvent.Replay -> restart()
+        }
+    }
+
+    /**
+     * CA5 : « Rejouer ». Le role CHARACTER (hote) relance la partie locale depuis
+     * son etat initial ; le role ENVIRONMENT efface l'etat affiche et attend le
+     * prochain [NetMessage.Snapshot] de l'hote.
+     */
+    private fun restart() {
+        when (role.value) {
+            Role.CHARACTER -> {
+                lastEnvInput.value = null
+                lastFrameNanos = null
+                accumulatorNanos = 0L
+                game.value = initialGame()
+            }
+
+            Role.ENVIRONMENT -> game.value = null
+
+            null -> Unit
         }
     }
 
@@ -151,7 +171,10 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
      */
     private fun stepFrame(timeNanos: Long) {
         val currentRole = role.value ?: return
-        if (currentRole == Role.CHARACTER && game.value == null) return
+        // CA5 : partie terminee (WON/LOST) => le moteur CHARACTER n'avance plus.
+        val gameStillRunning = currentRole == Role.ENVIRONMENT || game.value?.status == GameStatus.RUNNING
+        // CA5 : liaison decollee ou partie terminee => plus aucun pas (ni Snapshot, ni EnvInput).
+        if (linkState.value == LinkState.DISCONNECTED || !gameStillRunning) return
         val previous = lastFrameNanos ?: timeNanos
         lastFrameNanos = timeNanos
         accumulatorNanos += (timeNanos - previous).coerceAtLeast(0L)
@@ -161,6 +184,8 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
                 Role.CHARACTER -> {
                     game.update { current -> if (current != null) engine.step(current, buildStepInputs()) else current }
                     sendSnapshotIfDue(game.value)
+                    // CA5 : le pas qui termine la partie (WON/LOST) est le dernier.
+                    if (game.value?.status != GameStatus.RUNNING) break
                 }
 
                 Role.ENVIRONMENT -> {
@@ -186,10 +211,18 @@ class GameViewModel(private val engine: Engine, session: GameSession, private va
         )
     }
 
-    /** CA2 : l'hote envoie un [NetMessage.Snapshot] tous les [GameConfig.SNAPSHOT_EVERY_N_STEPS] pas. */
+    /**
+     * CA2 : l'hote envoie un [NetMessage.Snapshot] tous les
+     * [GameConfig.SNAPSHOT_EVERY_N_STEPS] pas ; CA5 : le pas qui met la partie
+     * en WON/LOST envoie aussi un snapshot de fin, pour que l'autre telephone
+     * affiche le panneau sans attendre.
+     */
     private fun sendSnapshotIfDue(newState: GameState?) {
-        val currentLink = link.value
-        if (newState != null && currentLink != null && newState.tick % GameConfig.SNAPSHOT_EVERY_N_STEPS == 0L) {
+        val currentLink = link.value ?: return
+        if (newState == null) return
+        val periodic = newState.tick % GameConfig.SNAPSHOT_EVERY_N_STEPS == 0L
+        val gameFinished = newState.status != GameStatus.RUNNING
+        if (periodic || gameFinished) {
             viewModelScope.launch { currentLink.send(NetMessage.Snapshot(newState)) }
         }
     }

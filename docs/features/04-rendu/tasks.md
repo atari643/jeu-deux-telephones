@@ -7,5 +7,5 @@ Cocher `[x]` seulement quand `pwsh tools/check.ps1` est vert. Chemins relatifs �
 - [x] 3. [A] Rôle hôte — `GameViewModel.kt` — test : `GameViewModelHostTest` avec `InMemoryLinkPair` (CA2)
 - [x] 4. [A] Rôle environnement — `GameViewModel.kt` — test : `GameViewModelEnvTest` (CA3)
 - [x] 5. [A] Dessin Canvas — `ui/game/GameScreen.kt`, `ui/game/GameDrawing.kt` ; `ScreenCatalog.kt` (2 entrées) — test : `GameScreenTest` + snapshots (CA4)
-- [ ] 6. [A] Fin de partie et déconnexion — `GameScreen.kt`, `GameViewModel.kt`, `strings.xml` — test : `GameScreenTest`, `GameViewModelTest` (CA5)
+- [x] 6. [A] Fin de partie et déconnexion — `GameScreen.kt`, `GameViewModel.kt`, `strings.xml` — test : `GameScreenTest`, `GameViewModelTest` (CA5)
 - [ ] 7. [A] Simulateur PC — `ui/game/GamePlayground.kt` (classe pur Kotlin + `GamePlaygroundPreview`), `strings.xml` — test : `GamePlaygroundTest` (clics -> Inputs -> état du moteur) (CA6)

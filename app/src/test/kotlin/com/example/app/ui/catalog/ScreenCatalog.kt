@@ -22,6 +22,6 @@ val screenCatalog: Map<String, @Composable () -> Unit> = mapOf(
     "NotesScreen_loading" to { NotesScreen(state = NotesPreviewData.loading, onEvent = {}) },
     "AboutScreen_default" to { AboutScreen(state = AboutPreviewData.default, onBackClick = {}) },
     "LobbyScreen_default" to { LobbyScreen(state = LobbyPreviewData.default, onEvent = {}) },
-    "GameScreen_default" to { GameScreen(state = GamePreviewData.default) },
-    "GameScreen_rotated" to { GameScreen(state = GamePreviewData.rotated) }
+    "GameScreen_default" to { GameScreen(state = GamePreviewData.default, onEvent = {}) },
+    "GameScreen_rotated" to { GameScreen(state = GamePreviewData.rotated, onEvent = {}) }
 )

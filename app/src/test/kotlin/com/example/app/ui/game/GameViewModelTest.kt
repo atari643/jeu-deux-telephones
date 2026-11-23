@@ -4,13 +4,18 @@ import com.example.app.data.link.InMemoryGameSession
 import com.example.app.data.link.InMemoryLinkPair
 import com.example.app.game.contract.Engine
 import com.example.app.game.contract.GameState
+import com.example.app.game.contract.GameStatus
 import com.example.app.game.contract.Inputs
 import com.example.app.game.contract.LinkState
+import com.example.app.game.contract.NetMessage
+import com.example.app.game.contract.PlayerState
 import com.example.app.game.contract.Role
 import com.example.app.game.engine.GameConfig
 import com.example.app.testing.FakeInputSource
 import com.example.app.testing.MainDispatcherRule
 import com.example.app.testing.keepCollecting
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.UnconfinedTestDispatcher
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -124,5 +129,106 @@ class GameViewModelTest {
         assertNull(state.linkState)
         assertNull(state.game)
         assertEquals(GameError.NoSession, state.error)
+    }
+
+    /** CA5 : moteur qui met la partie en [status] apres un seul pas. */
+    private class TerminalEngine(private val status: GameStatus = GameStatus.WON) : Engine {
+        val recordedStates = mutableListOf<GameState>()
+        val recordedInputs = mutableListOf<Inputs>()
+
+        override fun step(state: GameState, inputs: Inputs): GameState {
+            recordedStates += state
+            recordedInputs += inputs
+            return state.copy(tick = state.tick + 1, status = status)
+        }
+    }
+
+    @Test
+    fun `when game is won then a final snapshot is sent and engine is not stepped anymore`() = runTest {
+        val pair = InMemoryLinkPair()
+        val terminalEngine = TerminalEngine(GameStatus.WON)
+        viewModel = GameViewModel(terminalEngine, session, inputSource)
+        keepCollecting(viewModel.uiState)
+        val received = mutableListOf<NetMessage>()
+        val collector = launch(UnconfinedTestDispatcher(testScheduler)) {
+            pair.b.incoming.collect { received += it }
+        }
+        session.start(Role.CHARACTER, pair.a)
+
+        try {
+            viewModel.onEvent(GameEvent.Frame(0L))
+            viewModel.onEvent(GameEvent.Frame(stepNanos * 3L))
+
+            assertEquals(GameStatus.WON, viewModel.uiState.value.game?.status)
+            val snapshots = received.filterIsInstance<NetMessage.Snapshot>()
+            assertEquals(1, snapshots.size)
+            assertEquals(GameStatus.WON, snapshots.single().state.status)
+
+            viewModel.onEvent(GameEvent.Frame(stepNanos * 6L))
+            assertEquals(1, terminalEngine.recordedInputs.size)
+        } finally {
+            collector.cancel()
+        }
+    }
+
+    @Test
+    fun `when replay pressed after game over then a new game starts and engine steps again`() = runTest {
+        val terminalEngine = TerminalEngine(GameStatus.WON)
+        viewModel = GameViewModel(terminalEngine, session, inputSource)
+        keepCollecting(viewModel.uiState)
+        session.start(Role.CHARACTER, InMemoryLinkPair().a)
+
+        viewModel.onEvent(GameEvent.Frame(0L))
+        viewModel.onEvent(GameEvent.Frame(stepNanos))
+        assertEquals(GameStatus.WON, viewModel.uiState.value.game?.status)
+
+        viewModel.onEvent(GameEvent.Replay)
+        assertEquals(GameStatus.RUNNING, viewModel.uiState.value.game?.status)
+        assertEquals(0L, viewModel.uiState.value.game?.tick)
+
+        viewModel.onEvent(GameEvent.Frame(0L))
+        viewModel.onEvent(GameEvent.Frame(stepNanos))
+        assertEquals(2, terminalEngine.recordedInputs.size)
+        assertEquals(0L, terminalEngine.recordedStates.last().tick)
+    }
+
+    @Test
+    fun `when link disconnected then engine is not stepped anymore`() = runTest {
+        val pair = InMemoryLinkPair()
+        keepCollecting(viewModel.uiState)
+        session.start(Role.CHARACTER, pair.a)
+
+        viewModel.onEvent(GameEvent.Frame(0L))
+        viewModel.onEvent(GameEvent.Frame(stepNanos))
+        assertEquals(1L, viewModel.uiState.value.game?.tick)
+
+        pair.a.close()
+
+        viewModel.onEvent(GameEvent.Frame(stepNanos * 2L))
+        assertEquals(LinkState.DISCONNECTED, viewModel.uiState.value.linkState)
+        assertEquals(1, engine.recordedInputs.size)
+    }
+
+    @Test
+    fun `when replay pressed as environment then displayed game is cleared`() = runTest {
+        val pair = InMemoryLinkPair()
+        keepCollecting(viewModel.uiState)
+        session.start(Role.ENVIRONMENT, pair.b)
+        pair.a.send(
+            NetMessage.Snapshot(
+                GameState(
+                    tick = 5L,
+                    player = PlayerState(x = 1.0, y = 1.0, vx = 0.0, vy = 0.0, onGround = true),
+                    worldAngleDeg = 0.0,
+                    levelId = GameConfig.START_LEVEL_ID,
+                    status = GameStatus.RUNNING
+                )
+            )
+        )
+        assertEquals(5L, viewModel.uiState.value.game?.tick)
+
+        viewModel.onEvent(GameEvent.Replay)
+
+        assertNull(viewModel.uiState.value.game)
     }
 }

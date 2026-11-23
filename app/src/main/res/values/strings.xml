@@ -17,6 +17,11 @@
     <string name="lobby_simulated">Partenaire simulé</string>
     <string name="lobby_error_role">Choisis d\'abord un rôle</string>
     <string name="lobby_error_port">Port invalide</string>
+    <string name="game_won">Victoire !</string>
+    <string name="game_lost">Partie perdue</string>
+    <string name="game_replay">Rejouer</string>
+    <string name="game_disconnected">Liaison perdue</string>
+    <string name="game_back_to_lobby">Retour au lobby</string>
     <string name="about_title">À propos</string>
     <string name="about_back">Retour</string>
     <string name="about_version">Version %1$s</string>

@@ -32,7 +32,8 @@ fun AppNavHost() {
             LobbyRoute()
         }
         composable<GameDestination> {
-            GameRoute()
+            // CA5 04-rendu : decollee ou fin de partie -> retour au lobby.
+            GameRoute(onExit = { navController.popBackStack() })
         }
         composable<NotesDestination> {
             NotesRoute(onNavigateToAbout = { navController.navigate(AboutDestination) })
